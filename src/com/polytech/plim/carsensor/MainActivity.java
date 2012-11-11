@@ -5,18 +5,18 @@ import java.math.RoundingMode;
 
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.AvoidXfermode;
+import android.content.Intent;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.media.AudioManager;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.Toast;
 
 public class MainActivity extends Activity {
 
@@ -67,9 +67,10 @@ public class MainActivity extends Activity {
 				if(cb_avion.isChecked()){
 					cb_off.setChecked(false);
 					cb_silence.setChecked(false);
-					
 				}
-				
+				else {
+					cb_off.setChecked(true);
+				}
 			}
 		});
 		
@@ -80,6 +81,9 @@ public class MainActivity extends Activity {
 					cb_avion.setChecked(false);
 					cb_off.setChecked(false);
 				}
+				else {
+					cb_off.setChecked(true);
+				}
 				
 			}
 		});
@@ -89,31 +93,55 @@ public class MainActivity extends Activity {
 		
 		bt_activate.setOnClickListener(new OnClickListener() {
 			
-			public void onClick(View v) {
-				silenceMode(cb_silence.isChecked());
-				AirPlaneMode(cb_avion.isChecked());
+			public void onClick(View v) { 
+				String text ="";
+				if(cb_off.isChecked()) text = "";
+				else if(cb_avion.isChecked()) text = "Votre telephone passera en mode: avion";
+				else if(cb_silence.isChecked()) text = "Votre telephone passera en mode: silencieux";
+			
+				Toast.makeText(getBaseContext(), text, Toast.LENGTH_SHORT).show();
+				
 			}
 		});
 		
+		switchGPSstate(true);
+	}
+	
+	public void onHighSpeed(){
+		if(cb_silence.isChecked()){
+			SoundManager.play(getBaseContext(),R.raw.i_kill_u);
+			silenceMode(true);
+			SwitchAirPlaneMode(false);
+		}
+		if(cb_avion.isChecked()){
+			silenceMode(false);
+			SwitchAirPlaneMode(true);
+		}
+		if(cb_off.isChecked()){
+			silenceMode(false);
+			SwitchAirPlaneMode(false);
+		}
 	}
 
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		getMenuInflater().inflate(R.menu.activity_main, menu);
-		return true;
-	}
+//	@Override
+//	public boolean onCreateOptionsMenu(Menu menu) {
+//		getMenuInflater().inflate(R.menu.activity_main, menu);
+//		return true;
+//	}
 
 	// Affichage et traitement de la vitesse instannée
-	public void displaySpeed(double pCurrentSpeed)
+	public double displaySpeed(double pCurrentSpeed)
 	{
 		// variable pour l'arrondi
-		double vRounded =0;
+//		double vRounded =0;
 
 		// Si vitesse compteur selectionnée on ajoute 7% à la vitesse indiquée par le GPS
 		//        if (vCheckBoxVitesseCompteur.isChecked())
 		//        {
 		// arrondi à 1 chiffre après la virgule
-		vRounded = roundDecimal(convertSpeed(pCurrentSpeed*1.07),1);
+//		vRounded = 
+				
+				return roundDecimal(convertSpeed(pCurrentSpeed*1.07),1);
 		//        }
 		//        else
 		//        {
@@ -154,7 +182,10 @@ public class MainActivity extends Activity {
 
 					// appel de la méthode displaySpeed en lui
 					// passant la vitesse brute lu dans le GPS
-					displaySpeed(vCurrentSpeed);
+					if(displaySpeed(vCurrentSpeed)> 50){
+						onHighSpeed();
+					}
+					
 				}
 			}
 		}
@@ -174,14 +205,29 @@ public class MainActivity extends Activity {
 	} // fin class interne
 
 	// Active/Desactive le mode avion
-	public void AirPlaneMode(boolean state) {
-		// turn airplane mode on :1 // turn airplane mode off : 0
-		Settings.System.putInt(getContentResolver(),
-				Settings.System.AIRPLANE_MODE_ON, (state)?1:0); 
+	public void SwitchAirPlaneMode(boolean state) {
+		Toast.makeText(getBaseContext(), "AirPlaneMode :"+ ((state)?"On": "Off"), Toast.LENGTH_SHORT).show();
+		
+	    try {
+	        Settings.System.putInt(getContentResolver(),Settings.System.AIRPLANE_MODE_ON, state ? 1 : 0);
+
+	        Intent intent = new Intent(Intent.ACTION_AIRPLANE_MODE_CHANGED);
+
+	        intent.putExtra("state", state);
+
+	        sendBroadcast(intent);
+
+	    } catch (Exception e) {
+
+	        Toast.makeText(this, "exception:" + e.toString(), Toast.LENGTH_LONG).show();
+
+	    }
+
 	}
 	
 	//Active/Desactive le mode silencieux
 	public void silenceMode(boolean state){
+		Toast.makeText(getBaseContext(), "SilenceMode :"+ ((state)?"On": "Off"), Toast.LENGTH_SHORT).show();
 		if(state){
 			vAudioManager.setMode(AudioManager.RINGER_MODE_SILENT);
 		}
@@ -189,4 +235,12 @@ public class MainActivity extends Activity {
 			vAudioManager.setMode(currentAudioMode);
 		}
 	}
+	
+	private void switchGPSstate(boolean state){
+		Intent intent=new Intent("android.location.GPS_ENABLED_CHANGE");
+		intent.putExtra("enabled", state);
+		sendBroadcast(intent);
+	}
+
+	
 }
