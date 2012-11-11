@@ -1,0 +1,55 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <TextView
+        android:id="@+id/txv_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="41dp"
+        android:text="@string/choosemode"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+    <LinearLayout
+        android:id="@+id/listechoix"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/txv_title"
+        android:layout_marginTop="18dp"
+        android:orientation="vertical" >
+
+        <CheckBox
+            android:id="@+id/checkBox_Silence"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/silence" />
+
+        <CheckBox
+            android:id="@+id/checkBox_AirPlane"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/airplane" />
+
+        <CheckBox
+            android:id="@+id/checkBox_Off"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/off" />
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/button_activate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/listechoix"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="35dp"
+        android:text="@string/activate" />
+
+</RelativeLayout>

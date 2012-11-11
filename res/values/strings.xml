@@ -1,0 +1,14 @@
+<resources>
+
+    <string name="app_name">CarSensor</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="menu_settings">Settings</string>
+    <string name="title_activity_main">MainActivity</string>
+    <string name="choosemode">Choix Mode</string>
+    <string name="silence">Silencieux</string>
+    <string name="airplane">Mode Avion</string>
+    <string name="sonaffreux">Son Affreux</string>
+    <string name="off">Off</string>
+    <string name="activate">Activer</string>
+
+</resources>
